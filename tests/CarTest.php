@@ -21,7 +21,7 @@ class CarTest extends TestCase
 
 
     public function testIfBrandsAreValid() {
-        $brands = ["Audi", "Volvo", "Ford"];
+        $brands = ["Audi", "Volvo"];
 
         foreach ($brands as $brand) {
             $this->assertContains($brand, Car::AVAILABLE_BRANDS);

@@ -7,6 +7,7 @@
  */
 
 namespace Demo;
+use Faker\Provider\DateTime;
 
 /**
  * Class ParkingMachine
@@ -24,31 +25,53 @@ class ParkingMachine
     protected $parkedCars = [];
 
     /**
+     * Add license plate with the current timestamp to the parkedCars array.
      * @param $licensePlate
      * @param $startTime
      * @return bool
      */
-    public function checkIn($licensePlate, $startTime) {
-
-        return true;
+    public function checkIn($licensePlate) {
+        if (!isset($this->parkedCars[$licensePlate])) {
+            $this->parkedCars[$licensePlate] = new \DateTime();
+            return true;
+        }
+        return false;
     }
 
     /**
+     * Check-out and calculate the parking due (first hour is free).
      * @param $licensePlate
+     * @param $checkOutDate = null
      * @return int
      */
-    public function checkOut($licensePlate) {
+    public function checkOut($licensePlate, $checkOutDate = null) {
         $parkingDue = 0;
 
-        return $parkingDue;
+        // set default check-out date to tomorrow
+        if ($checkOutDate === null) {
+            $checkOutDate = new \DateTime("tomorrow");
+        }
+
+        if (!isset($this->parkedCars[$licensePlate])) {
+            throw Exception('License plate '. $licensePlate . 'not parked!');
+        }
+
+        $checkInDate = $this->parkedCars[$licensePlate];
+        $difference = $checkInDate->diff($checkOutDate);
+
+        return $difference;
     }
 
     /**
+     * Check the check-in time of the parked car.
      * @param $licensePlate
      * @return array
      */
     public function status($licensePlate) {
-        return ["startTime" => "parkingDue"];
+        if (!isset($this->parkedCars[$licensePlate])) {
+            throw new \Exception('License plate '. $licensePlate . ' not parked!');
+        }
+        return $this->parkedCars[$licensePlate];
     }
 
 }
